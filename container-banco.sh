@@ -2,7 +2,7 @@
 
 clear
 
-docker rm banco --force
+docker rm banco --force > /dev/null 2>&1
 
 docker run -d --rm --name banco \
 -v $(pwd)/banco/database:/var/lib/mysql \
