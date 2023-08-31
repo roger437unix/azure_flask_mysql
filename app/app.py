@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_USER'] = 'tux'
 app.config['MYSQL_PASSWORD'] = 'Mud@r123'
-app.config['MYSQL_HOST'] = 'mysql'
+app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_DB'] = 'banco'
 
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
@@ -63,7 +63,7 @@ def inserir(nome, email, senha):
     comando = f'INSERT INTO tbl_dados (nome, email, senha) VALUES ("{nome}", "{email}", "{senha}")'
 
     conexao = mysql.connector.connect(
-            host = 'mysql',
+            host = '127.0.0.1',
             user = 'tux',
             password = 'Mud@r123',
             database = 'banco'
