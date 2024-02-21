@@ -1,79 +1,83 @@
-#############################################################
-#
-# 1. Criar ambiente virtual Windows
-#
-# py -m venv .venv
-# .venv\Scripts\activate
-#
-# 2. Instalar módulos Python
-#
-# pip install flask flask_mysqldb mysql-connector-python
-#
-# 3. Criar arquivo de requerimentos do projeto
-#
-# pip freeze > requirements.txt
-#
-#############################################################
+'''
+docker run -d --rm --name=mysql \
+-v $PWD/dados:/var/lib/mysql \
+-p 3306:3306 \
+-e MYSQL_ROOT_PASSWORD=mysql \
+-e MYSQL_ROOT_HOST=% \
+-e MYSQL_DATABASE=db_users \
+-e MYSQL_USER=tux \
+-e MYSQL_PASSWORD=ABC123xyz \
+mysql \
+--default-authentication-plugin=mysql_native_password
+'''
 
 
 from flask import Flask, render_template, request, redirect
-from flask_mysqldb import MySQL
 import mysql.connector
+from credenciais import db_config
 
 
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = 'tux'
-app.config['MYSQL_PASSWORD'] = 'Mud@r123'
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_DB'] = 'banco'
-
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-mysql2 = MySQL(app)
+conexao = mysql.connector.connect(
+    host = db_config['host'],
+    user = db_config['user'],
+    password = db_config['password'],
+    database = db_config['database']
+)
 
 
-# Página principal da aplicação usando arquivo "formulario.html"
+def conn():    
+    cursor = conexao.cursor()
+    return cursor
+
+
+def tabela():
+    query_create_table = '''
+    CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    senha VARCHAR(50) NOT NULL
+    );
+    '''
+    cur = conn()
+    cur.execute(query_create_table)
+    cur.execute('COMMIT')
+    cur.close()
+
+
+tabela()
+
+
 @app.route('/',  methods=['GET','POST'])
 def homepage():
     if request.method == 'POST':
         req = request.form        
 
         nome = req['nome']
-        email = req.get('email')
-        senha = request.form['senha']
-
-        # print(f"\nNome: {nome}\nE-mail: {email}\nSenha: {senha}\n")
+        email = req['email']
+        senha = req['senha']
+       
         if nome != "" and email != "" and senha != "":
-            inserir(nome, email, senha)
+            query_insert = f"INSERT INTO users VALUES (NULL, '{nome}', '{email}', '{senha}')"
+            cur = conn()
+            cur.execute(query_insert)
+            cur.execute('COMMIT')
+            cur.close()            
         return redirect(request.url)		
     return render_template('formulario.html')
 
 
-# Página de consulta ao Banco de dados
 @app.route('/consultas')
 def select():
-    cur = mysql2.connection.cursor()
-    cur.execute('''SELECT * FROM tbl_dados ORDER BY id ASC''')
-    results = cur.fetchall()       
+    cur = conn()    
+    cur.execute('''SELECT nome, email FROM users ORDER BY id ASC''')    
+    results = cur.fetchall()    
+    cur.close()     
+    print(results)    
     return render_template("index.html", len = len(results), results = results) 
 
 
-def inserir(nome, email, senha):
-    comando = f'INSERT INTO tbl_dados (nome, email, senha) VALUES ("{nome}", "{email}", "{senha}")'
-
-    conexao = mysql.connector.connect(
-            host = '127.0.0.1',
-            user = 'tux',
-            password = 'Mud@r123',
-            database = 'banco'
-    )    
-    cursor = conexao.cursor()
-    cursor.execute(comando)
-    conexao.commit()
-    cursor.close()
-    conexao.close()
-  
-
-if __name__ == '__main__':
+if __name__ == '__main__':    
     app.run(host='0.0.0.0', port=5000, debug=True)

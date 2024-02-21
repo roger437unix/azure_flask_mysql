@@ -11,9 +11,9 @@ services:
       - ./banco/database:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: mysql
-      MYSQL_DATABASE: banco
+      MYSQL_DATABASE: db_users
       MYSQL_USER: tux
-      MYSQL_PASSWORD: Mud@r123         
+      MYSQL_PASSWORD: ABC123xyz         
     networks:
       - app
     restart: always

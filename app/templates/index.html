@@ -15,7 +15,7 @@
             <div class="alert alert-info" role="alert">
                 <li>Registro {{i+1}}</li>
             </div>
-            <li class="list-group-item"><pre>Nome: {{results[i]['nome']}}</pre><pre>E-mail: {{results[i]['email']}}</pre></li>            
+            <li class="list-group-item"><pre>Nome: {{results[i][0]}}</pre><pre>E-mail: {{results[i][1]}}</pre></li>            
             <br><br> 
         {%endfor%}  
         </ul>        
