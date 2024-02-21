@@ -13,6 +13,10 @@ mysql \
 
 pip install flask mysql mysql-connector-python
 
+# Cores de botões HTML
+
+https://getbootstrap.com/docs/4.0/components/buttons/#outline-buttons
+
 '''
 
 
