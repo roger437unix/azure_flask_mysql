@@ -9,6 +9,10 @@ docker run -d --rm --name=mysql \
 -e MYSQL_PASSWORD=ABC123xyz \
 mysql \
 --default-authentication-plugin=mysql_native_password
+
+
+pip install flask mysql mysql-connector-python
+
 '''
 
 
@@ -66,7 +70,7 @@ def homepage():
             cur.execute('COMMIT')
             cur.close()            
         return redirect(request.url)		
-    return render_template('formulario.html')
+    return render_template('homepage.html')
 
 
 @app.route('/consultas')
@@ -76,7 +80,7 @@ def select():
     results = cur.fetchall()    
     cur.close()     
     print(results)    
-    return render_template("index.html", len = len(results), results = results) 
+    return render_template("consultas.html", len = len(results), results = results) 
 
 
 if __name__ == '__main__':    
