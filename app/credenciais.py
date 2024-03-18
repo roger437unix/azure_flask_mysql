@@ -1,4 +1,4 @@
-address_database = '172.25.70.255'
+address_database = 'mysql'
 
 db_config = {
   'host': address_database,
